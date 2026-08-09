@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#080a20">
+<title>September Monthly Forecast — Rissa</title>
+<style>
+:root{
+ --navy:#080a20;--navy2:#11132f;--purple:#a875c7;--lav:#d8b8e8;
+ --gold:#d8b36a;--gold2:#f0d49a;--white:#f7f0ea;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--navy);color:white;font-family:Georgia,"Times New Roman",serif}
+button,input{font:inherit} button{cursor:pointer}
+#lock{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:22px;
+ background:radial-gradient(circle at 50% 22%,rgba(115,73,151,.28),transparent 38%),linear-gradient(145deg,#060817,#16112e 55%,#070817)}
+.lock-card{width:min(430px,100%);text-align:center;padding:36px 26px 29px;border:1px solid rgba(216,179,106,.62);
+ border-radius:25px;background:rgba(10,10,29,.87);box-shadow:0 30px 100px #0009,inset 0 0 55px #8d56ad18;backdrop-filter:blur(13px)}
+.moon{font-size:45px;color:var(--gold2);margin-bottom:2px}.eyebrow{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--gold2)}
+.lock-card h1{font-size:31px;margin:12px 0 5px;letter-spacing:.04em}.lock-card h1 span{color:var(--lav)}
+.lock-card p{color:#c9bdd1;font-size:14px;line-height:1.6;margin:0 auto 23px;max-width:330px}
+.lock-card input{width:100%;padding:14px;border-radius:12px;border:1px solid #d8b36a66;background:#ffffff0d;color:#fff;text-align:center;outline:none;letter-spacing:.12em}
+.lock-card input:focus{border-color:var(--gold);box-shadow:0 0 0 3px #d8b36a1c}
+.primary{width:100%;margin-top:12px;padding:14px;border:0;border-radius:12px;background:linear-gradient(135deg,#74418e,#33204e);color:white;font-weight:bold;letter-spacing:.12em}
+.error{height:20px;margin-top:10px;color:#ffb7cb;font-size:12px}
+#app{display:none;height:100%;flex-direction:column}
+body.unlocked #lock{display:none} body.unlocked #app{display:flex}
+.topbar{height:60px;flex:0 0 60px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;
+ background:rgba(7,8,24,.95);border-bottom:1px solid #d8b36a3b;backdrop-filter:blur(12px);z-index:20}
+.brand{min-width:0}.brand small{display:block;font-size:9px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+.brand strong{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.actions{display:flex;gap:7px}.icon-btn{width:39px;height:39px;border-radius:10px;border:1px solid #d8b36a55;background:#151633;color:#f0d49a;font-size:17px}
+.reader{position:relative;flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden;
+ background:radial-gradient(circle at 50% 50%,#4a2b6322,transparent 55%),#060718}
+.stage{width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;touch-action:pan-y;overflow:hidden}
+.page{max-height:calc(100dvh - 128px);max-width:calc(100vw - 24px);width:auto;height:auto;object-fit:contain;
+ box-shadow:0 18px 70px #000a;border-radius:2px;user-select:none;-webkit-user-drag:none;transition:opacity .2s,transform .28s}
+.page.zoomed{max-height:none;max-width:none;height:92%;width:auto}
+.nav{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 10px;pointer-events:none}
+.nav button{pointer-events:auto;width:42px;height:55px;border:1px solid #ffffff22;border-radius:14px;background:#090a18a8;color:#fff;font-size:22px;backdrop-filter:blur(7px)}
+.nav button:disabled{opacity:.18}
+.bottom{height:68px;flex:0 0 68px;display:flex;align-items:center;justify-content:center;gap:10px;background:#07081bf7;border-top:1px solid #d8b36a3b;z-index:20}
+.bottom button{border:1px solid #d8b36a44;background:#151633;color:#f0d49a;border-radius:11px;padding:10px 14px}
+.bottom button:disabled{opacity:.3}.counter{min-width:62px;text-align:center;font-size:13px;color:#fff}
+.hint{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);font-size:10px;color:#ffffff88;white-space:nowrap;pointer-events:none}
+.toast{position:fixed;left:50%;bottom:82px;transform:translate(-50%,18px);opacity:0;background:#201333;border:1px solid #d8b36a66;
+ color:white;padding:10px 15px;border-radius:10px;font-size:12px;transition:.25s;z-index:100}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:800px){.topbar{height:64px;flex-basis:64px;padding:8px 18px}.bottom{height:70px;flex-basis:70px}.page{max-height:calc(100dvh - 134px)}}
+</style>
+</head>
+<body>
+<section id="lock">
+ <div class="lock-card">
+  <div class="moon">☾</div>
+  <div class="eyebrow">Tarot Sarah · Private Reading</div>
+  <h1>September <span>×</span> Rissa</h1>
+  <p>Masukkan password untuk membuka Monthly Forecast personal ini.</p>
+  <input id="password" type="password" placeholder="Password" autocomplete="off">
+  <button class="primary" id="unlock">BUKA READING</button>
+  <div class="error" id="error"></div>
+ </div>
+</section>
+
+<main id="app">
+ <header class="topbar">
+  <div class="brand"><small>Tarot Sarah · Monthly Forecast</small><strong>September — Rissa</strong></div>
+  <div class="actions">
+   <button class="icon-btn" id="pdf" title="Download PDF">⇩</button>
+   <button class="icon-btn" id="fullscreen" title="Fullscreen">⛶</button>
+   <button class="icon-btn" id="zoom" title="Zoom">⌕</button>
+  </div>
+ </header>
+ <section class="reader">
+  <div class="stage" id="stage">
+   <img id="page" class="page" src="page-01.jpg" alt="Halaman 1" draggable="false">
+   <div class="nav"><button id="prev">←</button><button id="next">→</button></div>
+   <div class="hint">Geser kiri/kanan · ← → · ⇩ PDF</div>
+  </div>
+ </section>
+ <footer class="bottom">
+  <button id="prevBottom">← Sebelumnya</button>
+  <div class="counter"><span id="current">1</span> / <span id="total">14</span></div>
+  <button id="nextBottom">Berikutnya →</button>
+ </footer>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+const PASSWORD="SeptemberRissa";
+const pages=Array.from({length:14},(_,i)=>`page-${String(i+1).padStart(2,"0")}.jpg`);
+let index=0,startX=0,startY=0,moved=false;
+const body=document.body, pass=document.getElementById("password"), error=document.getElementById("error"), img=document.getElementById("page");
+const current=document.getElementById("current"), total=document.getElementById("total");
+function unlock(){if(pass.value===PASSWORD){body.classList.add("unlocked");pass.value="";}else{error.textContent="Password salah. Coba lagi.";pass.value="";pass.focus();}}
+document.getElementById("unlock").onclick=unlock;pass.addEventListener("keydown",e=>{if(e.key==="Enter")unlock()});
+function render(dir=0){
+ img.style.opacity="0";img.style.transform=dir>0?"translateX(22px)":dir<0?"translateX(-22px)":"none";
+ setTimeout(()=>{img.src=pages[index];img.alt="Halaman "+(index+1);current.textContent=index+1;img.style.transform="none";img.style.opacity="1";
+  document.getElementById("prev").disabled=index===0;document.getElementById("next").disabled=index===13;
+  document.getElementById("prevBottom").disabled=index===0;document.getElementById("nextBottom").disabled=index===13;
+ },120);
+}
+function next(){if(index<13){index++;render(1)}} function prev(){if(index>0){index--;render(-1)}}
+["next","nextBottom"].forEach(id=>document.getElementById(id).onclick=next);
+["prev","prevBottom"].forEach(id=>document.getElementById(id).onclick=prev);
+document.addEventListener("keydown",e=>{if(!body.classList.contains("unlocked"))return;if(e.key==="ArrowRight")next();if(e.key==="ArrowLeft")prev();if(e.key==="Escape")img.classList.remove("zoomed")});
+const stage=document.getElementById("stage");
+stage.addEventListener("touchstart",e=>{if(e.touches.length!==1)return;startX=e.touches[0].clientX;startY=e.touches[0].clientY;moved=false},{passive:true});
+stage.addEventListener("touchmove",e=>{if(e.touches.length===1&&Math.abs(e.touches[0].clientX-startX)>8)moved=true},{passive:true});
+stage.addEventListener("touchend",e=>{if(!moved)return;const dx=e.changedTouches[0].clientX-startX,dy=e.changedTouches[0].clientY-startY;if(Math.abs(dx)>55&&Math.abs(dx)>Math.abs(dy)*1.15)(dx<0?next:prev)()},{passive:true});
+document.getElementById("zoom").onclick=()=>{img.classList.toggle("zoomed");toast(img.classList.contains("zoomed")?"Zoom aktif":"Zoom dimatikan")};
+document.getElementById("fullscreen").onclick=()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()};
+document.getElementById("pdf").onclick=()=>{const a=document.createElement("a");a.href="Rissa-September-Monthly-Forecast.pdf";a.download="Rissa-September-Monthly-Forecast.pdf";document.body.appendChild(a);a.click();a.remove()};
+let tt;function toast(m){const e=document.getElementById("toast");e.textContent=m;e.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>e.classList.remove("show"),1200)}
+render();
+</script>
+</body>
+</html>
